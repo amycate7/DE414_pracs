@@ -1,0 +1,213 @@
+\documentclass[12pt]{article}
+
+% --- Packages (The "plugins" of LaTeX) ---
+\usepackage[utf8]{inputenc} % Character encoding
+\usepackage{geometry}       % Page margins
+ \geometry{margin=1in}
+\usepackage{graphicx}       % For inserting images
+\usepackage{amsmath}        % For math equations
+\usepackage{listings}
+\usepackage{xcolor} % Required for syntax highlighting colors
+
+% Define colors for Python syntax
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+% --- Document Information ---
+\title{DE 414: Practical 1 Report}
+\author{Amy McDermott (26911264)}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Introduction}
+This report focuses on documenting fundamental techniques in the Python programming language. This includes File I/O, NumPy array creation, indexing, slicing and visualization with Matplotlib.
+
+\section{Question 1}
+Firstly, the essential Python libraries \texttt{numpy} and \texttt{matplotlib} are imported.
+
+\begin{lstlisting}[language=Python, caption={Import libraries}]
+import numpy as np
+import matplotlib.pyplot as plt
+\end{lstlisting}
+
+\section{Question 2}
+The MNIST dataset is read from their respective files and stored as \texttt{numpy} variables. 
+
+\begin{lstlisting}[language=Python, caption={Read the MNIST dataset into numpy variables}]
+# Define an empty list to store the training data
+data = []
+
+# Read the data line by line into the list
+with open("data/train.csv") as f:
+    for line in f:
+        data.append(line.rstrip().split(","))
+
+# Convert the list into a numpy array
+data = np.array(data, dtype = np.int32)
+
+# Slice data to seperate training from target data
+train = data[:,1:]
+train_target = data[:,0]
+
+# Repeat this process for the test data
+test_data = []
+
+with open("data/test.csv") as f:
+    for line in f:
+        test_data.append(line.rstrip().split(","))
+
+test_data = np.array(test_data, dtype = np.int32)
+
+# Slice the test data into raw data and its corresponding targets
+test = test_data[:,1:785]
+test_target = test_data[:,0]
+\end{lstlisting}
+
+\section{Question 3}
+As defined in the practical 1 documentation, the variables must result with the following shapes:
+\begin{enumerate}
+    \item Train: $(60000\times784)$
+    \item Train targets:  $(60000\times1)$
+    \item Test: $(10000\times784)$
+    \item Test targets: $(10000\times1)$
+\end{enumerate}
+This is verified using the following code:
+
+\begin{lstlisting}[language=Python, caption={Confirm the shapes of the training and test data}]
+print(train.shape) # Prints the dimensions of the training data to the terminal
+print(train_target.shape)
+print(test.shape)
+print(test_target.shape)
+\end{lstlisting}
+The terminal output from the above listing, confirms that the training and test data was correctly read into \texttt{numpy} variables.
+
+\section{Question 4}
+The data is then normalised by means of linear scaling so that it lies within the range [0, 1]. The MNIST pixels are integers in the range 
+[0, 255]. Dividing by 255.0 scales the values to the required range.
+
+\begin{lstlisting}[language=Python, caption={Normalise the data using linear scaling}]
+train_norm = train / 255.0 # Diving by a float prevents integer division
+test_norm = test / 255.0
+
+# Quick sanity checks to confirm the normalization worked as expected
+min_train = np.min(train_norm)
+max_train = np.max(train_norm)
+min_test = np.min(test_norm)
+max_test= np.max(test_norm)
+
+print(f"The min of the training data is {min_train} and the maximum is {max_train}")
+print(f"The min of the test data is {min_test} and the maximum is {max_test}")
+\end{lstlisting}
+The output from the above listing confirms that the minimum and maximum values from both the training and test data lie within the [0,1] interval.
+
+\section{Question 5}
+Plot the first example from the training set using \texttt{matplotlib}.
+
+\begin{lstlisting}[language=Python, caption={Plot an example from the training data}]
+train_ex = train_norm[0,:] # Select the data from the first row
+train_ex = np.reshape(train_ex, (28, 28)) # Reshape the pixel data so that it can be correctly plotted
+
+plt.imshow(train_ex) # Plot the data
+plt.show()
+\end{lstlisting}
+
+\section{Question 6}
+Weights from a logistic regression model are loaded and stored in a \texttt{numpy} array.
+
+\begin{lstlisting}[language=Python, caption={Load weights into a numpy array}]
+weights = [] # Create an empty list
+
+# Read in the weights line by line into the list
+with open("data/weights.csv", 'r') as f:
+    for line in f:
+        weights.append(line.rstrip().split(","))
+
+# Convert the weights into a numpy array
+weights = np.array(weights, dtype = np.float32)
+\end{lstlisting}
+
+\section{Question 7}
+Using the \texttt{SoftmaxRegression} model, a prediction is made for an instance of data from the test set at index 7.
+
+\begin{lstlisting}[language=Python, caption={Predict digit of example from the test set}]
+from models import SoftmaxRegression
+model = SoftmaxRegression()
+
+model.load(weights)
+
+# Extract an example from test set
+example = test_norm[7,:]
+example = example.reshape((784,1)).T
+
+# Returns a (1,10) array of probabilities. This row vector of length 10 contains the predicted probabilities for each digit 
+prob = model(example)
+max_index = np.argmax(prob) #To obtain the predicted class id use `np.argmax(prob)` which returns the index of the maximum probability.
+
+print(f"The predicted value of the mnist digit example is {max_index}") # Print out the predicted value.
+\end{lstlisting}
+
+\section{Question 8}
+A bar graph is plotted to display the model probabilities computed for each possible output digit for the test set sample from index 7.
+
+\begin{lstlisting}[language=Python, caption={Display a bar graph of probabilities of each digit for a test set example}]
+x_axis = np.arange(0, 10) # Create array of evenly spaced values between 0 and 10
+plt.bar(range(10), prob[0]) # Pass in x-axis positions and corresponding values
+plt.show()
+\end{lstlisting}
+
+\section{Question 9}
+A Python function is defined to calculate the model accuracy. This function is used to calculate the average accuracy on the test set.
+
+\begin{lstlisting}[language=Python, caption={Compute accuracy of model classifier}]
+# Function to determine accuracy
+def accuracy(num_correct, total_pred):
+    return num_correct/total_pred # Divide the number of total correct classifications by total predictions
+
+test_pred = [] # Define an empty list to store the test data classification results
+
+# Loop through every data instance (row)
+for row in test_norm:
+    row = row.reshape((784,1)).T
+    probs = model(row) # Returns an array with 10 indices, storing the probability of the instance being classified as digit i
+    max_index = np.argmax(probs) # Classification result determined using index of array element containing the maximum probability
+
+    # Append new row of probabilities for next digit
+    test_pred.append(max_index)
+
+test_pred = np.array(test_pred) # Convert the list to a numpy array
+
+eq = np.equal(test_pred, test_target) # Test whether our model classifications are equal to their corresponding target values
+total_correct = np.sum(eq) # Sum the total correct classifications
+
+acc = accuracy(total_correct, test_target.size) # Use the function to determine accuracy of classifier
+print(acc) # Print accuracy to the terminal
+\end{lstlisting}
+This results in a model accuracy of 0.9229. Thus, 92.3\% of all instances of data that are classified using this model, are correctly identified as their corresponding digit.
+
+\end{document}
