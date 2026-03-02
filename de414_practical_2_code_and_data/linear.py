@@ -187,7 +187,11 @@ class LinearRegression:
             "but recieved shape: " + str(X.shape))
                 
         #************************** YOUR CODE HERE ************************#
-        y_out = X @ self.weights
+
+        # Add the bias column to input data
+        X_bias = self.add_bias(X)
+
+        y_out = X_bias @ self.weights
         return y_out
 
         #******************************************************************#
@@ -220,10 +224,31 @@ class LinearRegression:
         #     (2.a) Implement the least-squares regression solution        #
         ####################################################################
 
-        weights_opt = np.linalg.inv(X.T @ X) @ X.T @ Y # compute the optimal weights using the normal equations
+        X_bias = self.add_bias(X) # add bias term to input data
+        weights_opt = np.linalg.inv(X_bias.T @ X_bias) @ X_bias.T @ Y # compute the optimal weights using the normal equations
         self.weights = weights_opt # set the model weights to the optimal weights
 
         #******************************************************************#
+
+    def add_bias(Self, X):
+        """
+        Adds a bias term to the input data
+
+        Parameters:
+        -----------
+            X : np.array of shape (N,D)
+
+        Returns:
+        --------
+            X_bias : np.array of shape (N,D+1)
+                - Input data with a bias term added as the first column
+        """
+
+        N = X.shape[0] # number of samples
+        bias = np.ones((N,1)) # create a column of ones to serve as the bias term
+        X_bias = np.hstack((bias,X)) # concatenate the bias term with the input data
+
+        return X_bias
 
     def train(self,X,Y,epochs=200,learning_rate=0.01):
         """
@@ -249,9 +274,16 @@ class LinearRegression:
             
         if (len(Y.shape) != 2) and Y.shape[1] != (self.K):
             raise ValueError("Expected shape of (N,K) where N is" +
-            "number of samples but recieved shape: " + str(Y.shape))
-
-        #************************** YOUR CODE HERE ************************#
+            "number of samples and K is: " + str(self.weights.shape[1]) +
+            " but recieved shape: " + str(Y.shape))
+        
+        n = X.shape[0] # number of samples
+        X_bias = self.add_bias(X) # add bias term to input data
+        
+        for epoch in range(epochs):
+            y_hat = self.forward(X) # compute the model predictions for the current weights
+            change_weights = (2/n) * X_bias.T @ (y_hat - Y) # compute the gradient of the weights
+            self.weights -= learning_rate * change_weights # update the weights by moving in the direction of the negative gradient
 
         #******************************************************************#
 
@@ -300,7 +332,7 @@ random_predictions = np.random.randint(0, 10, size=num_samples) # generate rando
 # Convert to NxK matrix
 random_predictions_matrix = np.zeros((num_samples, 10))
 for i in range(num_samples):
-    random_predictions_matrix[i, random_predictions[i]] = random_predictions[i]
+    random_predictions_matrix[i, random_predictions[i]] = 1
 print(f"Untrained model accuracy: {accuracy(Y_data, random_predictions_matrix)}")
 # The result in accuracy is 0.10063333333333334 -- consistent with intuition -- random guessing for a 10 class classification problem should result in success 1/10 times
 
@@ -332,7 +364,9 @@ print(f"Random model error: {rand_pred_error}")
 #              (5.a) Create and train the model                    #
 ####################################################################
 
-#************************** YOUR CODE HERE ************************#
+lr_grad_desc = LinearRegression(X_data.shape[1], Y_data.shape[1])
+lr_grad_desc.train(X_data, Y_data)
+y_pred = lr_grad_desc.forward(X_data)
 
 #******************************************************************#
 
@@ -340,7 +374,8 @@ print(f"Random model error: {rand_pred_error}")
 #           (5.b) Calculate the trained model error                #
 ####################################################################
 
-#************************** YOUR CODE HERE ************************#
+print(f"Trained model using gradient descent error: {error(Y_data, y_pred)}")
+print(f"Trained model using gradient descent accuracy: {accuracy(Y_data, y_pred)}")
 
 #******************************************************************#
 
@@ -349,6 +384,28 @@ print(f"Random model error: {rand_pred_error}")
 #                   alternative hyperparameters                    #
 ####################################################################
 
-#************************** YOUR CODE HERE ************************#
+# Increase learning rate
+high_lr = LinearRegression(X_data.shape[1], Y_data.shape[1])
+high_lr.train(X_data, Y_data, learning_rate=0.1)
+y_pred_high_lr = high_lr.forward(X_data)
+print(f"Trained model using gradient descent with high learning rate accuracy: {accuracy(Y_data, y_pred_high_lr)}")
+
+# Decrease learning rate
+low_lr = LinearRegression(X_data.shape[1], Y_data.shape[1])
+low_lr.train(X_data, Y_data, learning_rate=0.001)
+y_pred_low_lr = low_lr.forward(X_data)
+print(f"Trained model using gradient descent with low learning rate accuracy: {accuracy(Y_data, y_pred_low_lr)}")
 
 #******************************************************************#
+
+# The terminal output from the above code is:
+# Dimensions of our feature matrix: (60000, 784)
+# Dimensions of our target matrix: (60000, 10)
+# Trained model accuracy: 0.8582
+# Untrained model accuracy: 0.10063333333333334
+#Random model error: 107924.0
+#Trained model using gradient descent error: 27498.859998085863
+#Trained model using gradient descent accuracy: 0.82835
+#Trained model using gradient descent with high learning rate accuracy: 0.09751666666666667
+#Trained model using gradient descent with low learning rate accuracy: 0.6345166666666666
+
