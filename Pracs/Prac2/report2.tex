@@ -1,0 +1,179 @@
+\documentclass[12pt]{article}
+
+% --- Packages (The "plugins" of LaTeX) ---
+\usepackage[utf8]{inputenc} % Character encoding
+\usepackage{geometry}       % Page margins
+ \geometry{margin=1in}
+\usepackage{graphicx}       % For inserting images
+\usepackage{amsmath}        % For math equations
+\usepackage{listings}
+\usepackage{xcolor} % Required for syntax highlighting colors
+
+% Define colors for Python syntax
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\definecolor{termback}{rgb}{0.1,0.1,0.1}
+\definecolor{termtext}{rgb}{0.9,0.9,0.9}
+\definecolor{lightgray}{rgb}{0.9,0.9,0.9}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstdefinestyle{terminal}{
+    backgroundcolor=\color{white},   % White background
+    basicstyle=\ttfamily\small\color{black}, % Black text
+    frame=single,                    % Simple border
+    rulecolor=\color{lightgray},     % Light gray border color
+    breaklines=true,                 % Wrap long lines
+    numbers=none,                    % No line numbers for output
+    captionpos=b,                    % Caption at the bottom
+    xleftmargin=10pt,                
+    xrightmargin=10pt,
+    framesep=5pt
+}
+
+\lstset{style=mystyle}
+
+% --- Document Information ---
+\title{DE 414: Practical 2 Report}
+\author{Amy McDermott (26911264)}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Introduction}
+This report documents the implementation of a linear regression model using Python. The model is trained on the MNIST dataset with the aim to 
+correctly classify digits. This report includes the code used for training the model, as well as the results obtained.
+
+\section{Question 1: Load training and test data}
+The MNIST dataset is loaded from a numpy archive file. This functionality is implemented in the function \texttt{read\_mnist\_npz()}, which is then called to load the training and test data.
+The file name for the numpy archive is passed into this function. The shapes of the training and test data are then printed to the terminal to confirm that they have the been loaded correctly.
+
+\begin{lstlisting}[
+    language=Python, 
+    caption={Loading MNIST dataset from NPZ archive},
+    label={lst:load_mnist},
+    breaklines=true,
+    basicstyle=\ttfamily\small,
+    frame=single
+]
+X_data = read_mnist_npz("./data/train.npz")[0] # read the training data from the numpy archive
+Y_data = read_mnist_npz("./data/train.npz")[1] # read the rraining target data from the numpy archive
+X_test = read_mnist_npz("./data/test.npz")[0] # read the test data
+Y_test = read_mnist_npz("./data/test.npz")[1] # read the test target data
+print(f"Dimensions of our feature matrix: {X_data.shape}")
+print(f"Dimensions of our target matrix: {Y_data.shape}")
+print(f"Dimensions of our test feature matrix: {X_test.shape}")
+print(f"Dimensions of our test target matrix: {Y_test.shape}")
+\end{lstlisting}
+
+The output is as follows, confirming that the training feature matrix has 60 000 samples, 784 features, and the target matrix has 60 000 samples and 10 classes (digits 0-9). This differs to the test data, which has 10 000 samples in both the feature and target matrices.
+\begin{lstlisting}[style=terminal, caption={Code execution output}]
+Dimensions of our training feature matrix: (60000, 784)
+Dimensions of our training target matrix: (60000, 10)
+Dimensions of our test feature matrix: (10000, 784)
+Dimensions of our test target matrix: (10000, 10)
+\end{lstlisting}
+
+\section{Question 2: Linear Regression Model Implementation}
+
+\subsection{Normal Equations}
+The normal equations are used to determine a closed form solution for the weights of the linear regression model. 
+This is implented in the class function \texttt{train\_normaleqs(self, X, Y)}, which takes the feature matrix \texttt{X} and the target matrix \texttt{Y} as input. 
+The weights are calculated using the formula:
+\begin{equation}
+    \mathbf{w}_{\text{opt}} = (\mathbf{X}^\top \mathbf{X})^{-1} \mathbf{X}^\top \mathbf{y}
+\end{equation}
+It is important to note that a bias term is added to the feature matrix \texttt{X} so as to account for the intercept in the linear regression model. This is done by concatenating a column of ones to the original feature matrix.
+\begin{lstlisting}[
+    language=Python, 
+    caption={Computing optimal weights using normal equations},
+    label={lst:optimal_weights},
+    breaklines=true,
+    basicstyle=\ttfamily\small,
+    frame=single
+]
+X_bias = self.add_bias(X) # add bias term to input data
+weights_opt = np.linalg.inv(X_bias.T @ X_bias) @ X_bias.T @ Y # compute the optimal weights using the normal equations
+self.weights = weights_opt # set the model weights to the optimal weights
+\end{lstlisting}
+
+\subsection{Forward Pass}
+The output of the model $\mathbf{\hat{y}}$ is determined by performing a forward pass through the model. This is implemented in the class function 
+\texttt{forward(self, X)} which takes the feature matrix \texttt{X} as input. The output is calculated using the formula:
+\begin{equation}
+    \mathbf{\hat{y}} = \mathbf{X} \mathbf{w}_{\text{opt}}
+\end{equation}
+\begin{lstlisting}[
+    language=Python, 
+    caption={Performing a forward pass through the linear regression model},
+    label={lst:forward_pass},
+    breaklines=true,
+    basicstyle=\ttfamily\small,
+    frame=single
+]
+X_bias = self.add_bias(X) # Add the bias column to input data
+y_out = X_bias @ self.weights # Forward pass step
+return y_out
+\end{lstlisting}
+
+\subsection{Create and train the model}
+An instance of the linear regression model is created by calling the class constructor. Both the dimensionality of the model and targets is passed into the constructor. 
+The model is then trained (optimal weights are determined) using the normal equations. 
+
+\begin{lstlisting}[
+    language=Python, 
+    caption={Creating and training the linear regression model using normal equations},
+    label={lst:train_model},
+    breaklines=true,
+    basicstyle=\ttfamily\small,
+    frame=single
+]
+lr = LinearRegression(X_data.shape[1], Y_data.shape[1]) # create the model with D = 784 and K = 10
+lr.train_normaleqs(X_data,Y_data) # train the model using the normal equations
+\end{lstlisting}
+
+\section{Question 3: Accuracy of the model}
+\subsection{Evaluation of model trained using the normal equations}
+Using the trained model, predictions are made on the test data. The accuracy of the model is then evaluated using the function \texttt{accuracy(Y,Y\_hat)}, which determines 
+the ratio of correct predictions to total predictions. This performance metric is then printed to the terminal. 
+\begin{lstlisting}[
+    language=Python, 
+    caption={Compute accuracy of linear regression model},
+    label={lst:optimal_weights},
+    breaklines=true,
+    basicstyle=\ttfamily\small,
+    frame=single
+]
+y_hat = lr.forward(X_test) # compute the model predictions for the test data
+print(f"Trained model accuracy: {accuracy(Y_test, y_hat)}") # Compare ground truth labels to model predictions
+\end{lstlisting}
+\begin{lstlisting}[style=terminal, caption={Code execution output}]
+Trained model accuracy: 0.8604
+\end{lstlisting}
+
+\subsection{Baseline comparison}
+
+
+
+\end{document}

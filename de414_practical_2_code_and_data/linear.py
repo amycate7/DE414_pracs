@@ -91,8 +91,13 @@ def read_mnist_npz(filename):
 
 X_data = read_mnist_npz("./data/train.npz")[0] # read the data from the numpy archive
 Y_data = read_mnist_npz("./data/train.npz")[1] # read the target data from the numpy archive
+X_test = read_mnist_npz("./data/test.npz")[0] 
+Y_test = read_mnist_npz("./data/test.npz")[1]
+
 print(f"Dimensions of our feature matrix: {X_data.shape}")
 print(f"Dimensions of our target matrix: {Y_data.shape}")
+print(f"Dimensions of our test feature matrix: {X_test.shape}")
+print(f"Dimensions of our test target matrix: {Y_test.shape}")
 
 # Note: N = 60000, D = 784, K = 10
 
@@ -321,8 +326,8 @@ def accuracy(Y,Y_hat):
 
     return acc / Y.shape[0] # normalise by the total # targets
 
-y_hat = lr.forward(X_data)
-print(f"Trained model accuracy: {accuracy(Y_data, y_hat)}")
+y_hat = lr.forward(X_test) # compute the model predictions for the test data
+print(f"Trained model accuracy: {accuracy(Y_test, y_hat)}") # Compare ground truth labels to model predictions
 # This results in an accuracy of 0.85525
 
 # Randomly choosing a prediction for a baseline comparison -- every trained classidier should perform better than this
