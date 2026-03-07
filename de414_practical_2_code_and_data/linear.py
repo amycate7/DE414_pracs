@@ -330,16 +330,9 @@ y_hat = lr.forward(X_test) # compute the model predictions for the test data
 print(f"Trained model accuracy: {accuracy(Y_test, y_hat)}") # Compare ground truth labels to model predictions
 # This results in an accuracy of 0.85525
 
-# Randomly choosing a prediction for a baseline comparison -- every trained classidier should perform better than this
-num_samples = Y_data.shape[0]
-np.random.seed(42) # set random seed for reproducibility
-random_predictions = np.random.randint(0, 10, size=num_samples) # generate random predictions for each sample
-# Convert to NxK matrix
-random_predictions_matrix = np.zeros((num_samples, 10))
-for i in range(num_samples):
-    random_predictions_matrix[i, random_predictions[i]] = 1
-print(f"Untrained model accuracy: {accuracy(Y_data, random_predictions_matrix)}")
-# The result in accuracy is 0.10063333333333334 -- consistent with intuition -- random guessing for a 10 class classification problem should result in success 1/10 times
+lr_untrained = LinearRegression(X_data.shape[1], Y_data.shape[1])
+y_hat_untrained = lr_untrained.forward(X_test) # compute the model predictions for the test data
+print(f"Untrained model accuracy: {accuracy(Y_test, y_hat_untrained)}")
 
 #******************************************************************#
 
@@ -360,7 +353,7 @@ def error(y, y_hat):
     """
     return np.sum((y - y_hat)**2)
 
-rand_pred_error = error(Y_data, random_predictions_matrix)
+rand_pred_error = error(Y_test, y_hat_untrained)
 print(f"Random model error: {rand_pred_error}")
 
 #******************************************************************#
@@ -371,7 +364,8 @@ print(f"Random model error: {rand_pred_error}")
 
 lr_grad_desc = LinearRegression(X_data.shape[1], Y_data.shape[1])
 lr_grad_desc.train(X_data, Y_data)
-y_pred = lr_grad_desc.forward(X_data)
+y_pred_train = lr_grad_desc.forward(X_data)
+y_pred_test = lr_grad_desc.forward(X_test)
 
 #******************************************************************#
 
@@ -379,8 +373,8 @@ y_pred = lr_grad_desc.forward(X_data)
 #           (5.b) Calculate the trained model error                #
 ####################################################################
 
-print(f"Trained model using gradient descent error: {error(Y_data, y_pred)}")
-print(f"Trained model using gradient descent accuracy: {accuracy(Y_data, y_pred)}")
+print(f"Error on training set: {error(Y_data, y_pred_train)}")
+print(f"Error on test set: {error(Y_test, y_pred_test)}")
 
 #******************************************************************#
 

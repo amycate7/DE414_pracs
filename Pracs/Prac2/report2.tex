@@ -1,4 +1,4 @@
-\documentclass[12pt]{article}
+\documentclass[11pt]{article}
 
 % --- Packages (The "plugins" of LaTeX) ---
 \usepackage[utf8]{inputenc} % Character encoding
@@ -159,8 +159,8 @@ Using the trained model, predictions are made on the test data. The accuracy of 
 the ratio of correct predictions to total predictions. This performance metric is then printed to the terminal. 
 \begin{lstlisting}[
     language=Python, 
-    caption={Compute accuracy of linear regression model},
-    label={lst:optimal_weights},
+    caption={Compute accuracy of trained linear regression model},
+    label={lst:accuracy},
     breaklines=true,
     basicstyle=\ttfamily\small,
     frame=single
@@ -173,7 +173,162 @@ Trained model accuracy: 0.8604
 \end{lstlisting}
 
 \subsection{Baseline comparison}
+The model is initialised with random weights so as to assess the performance of an untrained model. Predictions are made on the test data using the untrained model, and the accuracy is computed and printed to the terminal.
+\begin{lstlisting}[
+    language=Python, 
+    caption={Compute accuracy of untrained linear regression model},
+    label={lst:optimal_weights},
+    breaklines=true,
+    basicstyle=\ttfamily\small,
+    frame=single
+]
+lr_untrained = LinearRegression(X_data.shape[1], Y_data.shape[1])
+y_hat_untrained = lr_untrained.forward(X_test) # compute the model predictions for the test data
+print(f"Untrained model accuracy: {accuracy(Y_test, y_hat_untrained)}")
+\end{lstlisting}
+\begin{lstlisting}[style=terminal, caption={Code execution output}]
+Untrained model accuracy: 0.1083
+\end{lstlisting}
+Considering that the model is performing a 10 class classification task, the accuracy of the untrained model is consistent with intuition
+- random guessing for a 10 class classification problem should result in success 1/10 times. The trained model performs significantly better 
+than the untrained model, demonstrating that it has successfully learned to classify the digits in the MNIST dataset.
 
+\section{Question 4: Error of the model}
+The error of the untrained model is computed using the function \texttt{error(y, y\_hat)}, which calculates the squared error between the ground truth labels and the model predictions.
+\begin{lstlisting}[
+    language=Python, 
+    caption={Compute error of untrained linear regression model},
+    label={lst:untrained_model},
+    breaklines=true,
+    basicstyle=\ttfamily\small,
+    frame=single
+]
+def error(y, y_hat):
+    """
+    Calculate the squared error.
 
+    Arguments:
+    ----------
+        y: np.array of shape (N,K)
+            - One-hot encoded targets
+        y_hat: np.array of shape (N,K)
+            - Digit probabilities/likelihoods for each example in y
+    """
+    return np.sum((y - y_hat)**2)
+
+rand_pred_error = error(Y_test, y_hat_untrained)
+print(f"Random model error: {rand_pred_error}")
+\end{lstlisting}
+\begin{lstlisting}[style=terminal, caption={Code execution output}]
+Random model error: 14307.17285177822
+\end{lstlisting}
+
+\section{Question 5: Iterative Gradient Descent}
+Another method for training the linear regression model is implemented - iterative gradient descent optimisation. 
+This is computed by iteratively computing new weights using the formulae:
+\begin{equation}
+    \mathbf{w}_{n+1} = \mathbf{w}_n + \Delta \mathbf{w}
+\end{equation}
+\begin{equation}
+    \Delta \mathbf{w} = -\alpha \frac{2}{N} \mathbf{X}^\top (\mathbf{X} \mathbf{w}_n - \mathbf{y})
+\end{equation}
+This functionality is implemented in the class function \texttt{train(self,X,Y,epochs=200,learning\_rate=0.01)} with the following code:
+\begin{lstlisting}[
+    language=Python, 
+    caption={Gradient descent optimisation for training the linear regression model},
+    label={lst:optimal_weights},
+    breaklines=true,
+    basicstyle=\ttfamily\small,
+    frame=single
+]
+n = X.shape[0] # number of samples
+X_bias = self.add_bias(X) # add bias term to input data
+        
+for epoch in range(epochs):
+  y_hat = self.forward(X) # compute the model predictions for the current weights
+  change_weights = (2/n) * X_bias.T @ (y_hat - Y) # compute the gradient of the weights
+  self.weights -= learning_rate * change_weights # update the weights by moving in the direction of the negative gradient
+\end{lstlisting}
+
+\subsection{Create and train model}
+An instance of the linear regression model is created and trained using the gradient descent method using the default learning rate and number of training epochs. 
+Model predictions are made on both the training and test sets.
+
+\begin{lstlisting}[
+    language=Python, 
+    caption={Create instance of model},
+    label={lst:optimal_weights},
+    breaklines=true,
+    basicstyle=\ttfamily\small,
+    frame=single
+]
+lr_grad_desc = LinearRegression(X_data.shape[1], Y_data.shape[1])
+lr_grad_desc.train(X_data, Y_data)
+y_pred_train = lr_grad_desc.forward(X_data)
+y_pred_test = lr_grad_desc.forward(X_test)
+\end{lstlisting}
+
+\subsection{Model error}
+The error of the trained model on both the training and test sets are then computed and printed to the terminal.
+\begin{lstlisting}[
+    language=Python, 
+    caption={Evaluate error of model},
+    label={lst:optimal_weights},
+    breaklines=true,
+    basicstyle=\ttfamily\small,
+    frame=single
+]
+print(f"Error on training set: {error(Y_data, y_pred_train)}")
+print(f"Error on test set: {error(Y_test, y_pred_test)}")
+\end{lstlisting}
+
+\begin{lstlisting}[style=terminal, caption={Code execution output}]
+Error on training set: 27498.859998085863
+Error on test set: 4503.876210534427
+\end{lstlisting}
+
+Note that the error on the test set is significantly lower than the error on the training set. This is liekly due to the sample sizes of the respective datasets - a larger dataset will result in a higher total squared error value since no normalisation is performed in the error function.
+
+\subsection{Train model with alternate hyperparameters}
+\subsubsection{Increase learning rate}
+Increasing the learning rate of our gradient descent algorithm results in low accuracy. This is indicative of the algorithm diverging. When the weight 
+updates are too large, the algorithm will 'overshoot' the global minimum of the loss function. Instead of converging, the weights oscillate with increasing magnitude, resulting in a model that performs worse than random guessing. This is reflected in the accuracy of the model.
+\begin{lstlisting}[
+    language=Python, 
+    caption={Train model with high learning rate},
+    label={lst:highLearning},
+    breaklines=true,
+    basicstyle=\ttfamily\small,
+    frame=single
+]
+high_lr = LinearRegression(X_data.shape[1], Y_data.shape[1])
+high_lr.train(X_data, Y_data, learning_rate=0.1)
+y_pred_high_lr = high_lr.forward(X_data)
+print(f"Trained model using gradient descent with high learning rate accuracy: {accuracy(Y_data, y_pred_high_lr)}")
+\end{lstlisting}
+\begin{lstlisting}[style=terminal, caption={Code execution output}]
+Trained model using gradient descent with high learning rate accuracy: 0.09751666666666667
+\end{lstlisting}
+
+\subsubsection{Decrease learning rate}
+The significant increase in accuracy demonstrates that a smaller step size allows the gradient descent algorithm to descend the cost function toward a local or global minimum.
+However, given that the accuracy is 63\% - significantly lower than the accuracy obtained using the normal equations - it is likely that the model requires more iterations to reach its optimal state. 
+Thus, the weight updates are small and precise but require more iterations to converge.
+\begin{lstlisting}[
+    language=Python, 
+    caption={Train model with low learning rate},
+    label={lst:lowLearning},
+    breaklines=true,
+    basicstyle=\ttfamily\small,
+    frame=single
+]
+low_lr = LinearRegression(X_data.shape[1], Y_data.shape[1])
+low_lr.train(X_data, Y_data, learning_rate=0.001)
+y_pred_low_lr = low_lr.forward(X_data)
+print(f"Trained model using gradient descent with low learning rate accuracy: {accuracy(Y_data, y_pred_low_lr)}")
+\end{lstlisting}
+\begin{lstlisting}[style=terminal, caption={Code execution output}]
+Trained model using gradient descent with low learning rate accuracy: 0.6345166666666666
+\end{lstlisting}
 
 \end{document}
