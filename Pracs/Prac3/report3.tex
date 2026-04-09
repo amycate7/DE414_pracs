@@ -1,0 +1,129 @@
+\documentclass[11pt]{article}
+
+% --- Packages (The "plugins" of LaTeX) ---
+\usepackage[utf8]{inputenc} % Character encoding
+\usepackage{geometry}       % Page margins
+ \geometry{margin=1in}
+\usepackage{graphicx}       % For inserting images
+\usepackage{amsmath}        % For math equations
+\usepackage{listings}
+\usepackage{xcolor} % Required for syntax highlighting colors
+
+% Define colors for Python syntax
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\definecolor{termback}{rgb}{0.1,0.1,0.1}
+\definecolor{termtext}{rgb}{0.9,0.9,0.9}
+\definecolor{lightgray}{rgb}{0.9,0.9,0.9}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstdefinestyle{terminal}{
+    backgroundcolor=\color{white},   % White background
+    basicstyle=\ttfamily\small\color{black}, % Black text
+    frame=single,                    % Simple border
+    rulecolor=\color{lightgray},     % Light gray border color
+    breaklines=true,                 % Wrap long lines
+    numbers=none,                    % No line numbers for output
+    captionpos=b,                    % Caption at the bottom
+    xleftmargin=10pt,                
+    xrightmargin=10pt,
+    framesep=5pt
+}
+
+\lstset{style=mystyle}
+
+% --- Document Information ---
+\title{DE 414: Practical 2 Report}
+\author{Amy McDermott (26911264)}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Introduction}
+This report documents the implementation of a logistic regression model using Python. The model is trained on the MNIST dataset with the aim to 
+correctly classify digits. This report includes the code used for training the model, as well as the results obtained.
+-describe question posed
+- strategy to solve the
+- software designed to implement solution
+- analysis of results that were obtained
+
+\section*{Question 1: Softmax Function}
+The softmax function is a common activation function used to convert a vector of raw scores (logits) into a probability distribution, with values ranging from 0 to 1 that sum to 1. The function is defined as follows: 
+\begin{equation}
+\sigma(\mathbf{z})_i = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}} \ \ \ \text{for } i = 1, \dots, K
+\end{equation}
+where $\mathbf{z}$ is the logit of class $i$ and $K$ is the total number of classes.
+The output of the softmax function yields interpretable probability scores for each class.
+
+The implementation of this function in Python, computes softmax for an N-dimensional NumPy array \texttt{x} along a specified axis (defaulting to the last dimension). It uses vectorized operations for efficiency on large datasets.
+To ensure numerical stability, the maximum value along the axis is subtracted from the input before exponentiation to prevent overflow/underflow issues. This shifts values without altering the relative probabilities.
+The function then computes the exponentials of the shifted inputs and normalizes them by dividing by the sum of exponentials along the specified axis, resulting in a probability distribution. The 
+listing \ref{lst:softmax} below shows the implementation of the softmax function in Python.
+
+\begin{lstlisting}[
+    language=Python, 
+    caption={Softmax function implementation},
+    label={lst:softmax},
+    breaklines=true,
+    basicstyle=\ttfamily\small,
+    frame=single
+]
+shift_X = X - np.max(X, axis = axis, keepdims = True) # Subtract the maximum for numerical stability
+exps = np.exp(shift_X) # Compute the exponentials
+return exps / np.sum(exps, axis = axis, keepdims = True) # Compute softmax
+\end{lstlisting}
+
+The vectorized implementation is a design choice that leverages Numpy's operations for fast computation without loops. This is suitable for large datasets.
+
+\section*{Question 2: Log-likelihood Function}
+A function is implemented to compute the log-likelihood between one-hot encoded target vectors $\mathbf{y}$, and predictions $\mathbf{\hat{y}}$. This function computes how well predicted probabilities match the true one-hot encoded labels 
+in multiclass classification. The training set log-likelihood is defined as:
+\begin{equation}
+\ell(\mathbf{W}) = \sum_{n=1}^{N} \sum_{k=1}^{K} y_{k}^{(n)} \ln \left( \hat{y}_{k}^{(n)} \right)
+\end{equation}
+The implementation in Python computes the log-likelihood for each sample in a batch and ensures numerical stability by avoiding undefined logarithms. This is achieved by clipping predicted probabilities  
+\texttt{Y\_hat} to [epsilon, 1] to prevent log(0), which is undefined and causes errors. The function then performs an element-wise logarithm operation to the clipped predictions, yielding log-probabilities.
+for each class per sample. Finally, the log-likelihood is computed by summing the element-wise product of the one-hot encoded targets and the log-probabilities across all samples and classes. This returns 
+an array of log-likelihoods for each sample in the batch.
+ The implementation is shown in listing \ref{lst:loglikelihood}.
+ \begin{lstlisting}[
+    language=Python, 
+    caption={Log-likelihood function implementation},
+    label={lst:loglikelihood},
+    breaklines=true,
+    basicstyle=\ttfamily\small,
+    frame=single
+]
+epsilon = 1e-15 # Perturb Y_hat to prevent log(0) which is undefined
+Y_hat = np.clip(Y_hat, epsilon, 1)
+log_probs = np.log(Y_hat) # Compute the log of the predicted probabilities
+LL = np.sum(Y * log_probs, axis = 1) # Element-wise multiplication of Y and log_probs, then sum across classes for each sample
+return LL # Log likelihoods per sample
+\end{lstlisting}
+
+\section*{Extract the minibatch from the training set}
+
+
+\end{document}
