@@ -8,6 +8,8 @@
 \usepackage{amsmath}        % For math equations
 \usepackage{listings}
 \usepackage{xcolor} % Required for syntax highlighting colors
+\usepackage{booktabs} % For professional lines
+\usepackage{siunitx}  % For decimal alignment
 
 % Define colors for Python syntax
 \definecolor{codegreen}{rgb}{0,0.6,0}
@@ -210,6 +212,61 @@ for epoch in range(epochs):
         self.weights += learning_rate * grad
 \end{lstlisting}
 
+\subsection*{4.c: Train model}
+An instance of the MultinomialLogisticRegression class is created, and the model is trained on the training data by calling the train method for all batches in the training set. 
+A batch size of 60 is used, and the model is trained for 32 epochs with a learning rate of 0.01. The Python implementation is shown in listing \ref{lst:training}.
+
+ \begin{lstlisting}[
+    language=Python, 
+    caption={Model training implementation},
+    label={lst:training},
+    breaklines=true,
+    basicstyle=\ttfamily\small,
+    frame=single
+]
+lr = MultinomialLogisticRegression(train_X.shape[1], train_Y.shape[1])
+lr.train(train_X, train_Y, test_X, test_Y, epochs=32, learning_rate=0.01, batch_size=60)
+\end{lstlisting}
+
+\subsection*{4.d: Performance evaluation}
+The performance of the trained model is evaluated in terms of accuracy by writing to a log file after each epoch. The log file records the 
+training and test set log-likelihood and accuracy after each epoch, allowing for analysis of the model's performance over time. The log file is created in a "log" directory, and the results are appended after each epoch of training.
+The listing \ref{lst:logging} shows the implementation of the logging functionality.
+
+ \begin{lstlisting}[
+    language=Python, 
+    caption={Logging implementation for performance evaluation},
+    label={lst:logging},
+    breaklines=true,
+    basicstyle=\ttfamily\small,
+    frame=single
+]
+with open(log_file, "a") as f:
+    f.write(f"{epoch+1},{train_ll},{test_ll},{train_acc},{test_acc}\n")
+\end{lstlisting}
+
+After executing the training process, the log file can be analyzed to evaluate the model's performance for each epoch. The trends observed provide insights into how well the model generalizes to unseen data and whether it is converging towards a good solution.
+Table \ref{tab:model_performance} summarizes the log file data for the last five epochs of training. (A batch size of 60 is used, and the model is trained for 32 epochs with a learning rate of 0.01.)
+
+\begin{table}[h]
+    \centering
+    \caption{Model Training and Test Performance}
+    \label{tab:model_performance}
+    \begin{tabular}{c S[table-format=-1.4] S[table-format=-1.4] S[table-format=1.4] S[table-format=1.4]}
+        \toprule
+        \textbf{Epoch} & {\textbf{Train LL}} & {\textbf{Test LL}} & {\textbf{Train Acc}} & {\textbf{Test Acc}} \\
+        \midrule
+        28 & -0.3019 & -0.2935 & 0.9163 & 0.9193 \\
+        29 & -0.3007 & -0.2926 & 0.9165 & 0.9194 \\
+        30 & -0.2995 & -0.2918 & 0.9169 & 0.9195 \\
+        31 & -0.2984 & -0.2910 & 0.9174 & 0.9196 \\
+        32 & -0.2974 & -0.2902 & 0.9176 & 0.9198 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+The results in the log file indicate that the training and test set log-likelihoods are improving (becoming less negative) over epochs, which corresponds to the model learning to maximise the training log-likelihood. 
+Furthermore, it can be observed that both the training and test accuracies are increasing over epochs, indicating that the model is improving its performance on both the training and unseen test data. 
+The final test set accuracy of 0.9198 suggests that the model is performing well in classifying the digits in the MNIST dataset.
 
 
 \end{document}

@@ -7,6 +7,7 @@
 # questions from practical 3                                       #
 ####################################################################
 
+import os
 import numpy as np
 from math import ceil
 import matplotlib.pyplot as plt
@@ -311,10 +312,11 @@ class MultinomialLogisticRegression:
             raise ValueError("Expected shape of (N,K) where N is" +
             "number of samples but recieved shape: " + str(train_Y.shape))
         
-        #log_file = "log/log.csv"
+        log_file = "log/log.csv"
+        os.makedirs("log", exist_ok=True) # Create log directory if it doesn't exist
 
-        #with open(log_file,"w+") as f:
-            #f.write("epoch,train_ll,test_ll,train_acc,test_acc\n")
+        with open(log_file,"w") as f:
+            f.write("epoch,train_ll,test_ll,train_acc,test_acc\n")
 
         num_samples = train_X.shape[0]
         num_batches = num_samples // batch_size 
@@ -332,6 +334,16 @@ class MultinomialLogisticRegression:
                 grad = (x_batch_bias.T @ (y_batch - y_hat)) / batch_size # Average over the batch
 
                 self.weights += learning_rate * grad
+            
+            # Log training and test set log-likelihood and accuracy after each epoch
+            train_Y_hat = self.forward(train_X)
+            test_Y_hat = self.forward(test_X)
+            train_ll = np.mean(ll(train_Y, train_Y_hat))
+            test_ll = np.mean(ll(test_Y, test_Y_hat))
+            train_acc = accuracy(train_Y, train_Y_hat)
+            test_acc = accuracy(test_Y, test_Y_hat)
+            with open(log_file, "a") as f:
+                f.write(f"{epoch+1},{train_ll},{test_ll},{train_acc},{test_acc}\n")
 
 
 ####################################################################
@@ -340,7 +352,7 @@ class MultinomialLogisticRegression:
 
 # Training set
 train_X, train_Y = read_mnist_npz("data/train.npz")
-print("Trainining set read.")
+print("Training set read.")
 print("   train_X is",train_X.ndim,"dimensional",train_X.shape,"so that N =",train_X.shape[0],"and each input has",train_X.shape[1],"dimensions.") 
 print("   train_Y is",train_Y.ndim,"dimensional",train_Y.shape,"so that K =",train_Y.shape[1]," classes.") 
  
