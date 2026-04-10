@@ -123,7 +123,93 @@ LL = np.sum(Y * log_probs, axis = 1) # Element-wise multiplication of Y and log_
 return LL # Log likelihoods per sample
 \end{lstlisting}
 
-\section*{Extract the minibatch from the training set}
+\section*{Question 3: Extract the minibatch from the training set}
+Mini-batch training is a common technique in machine learning to balance computational efficiency with convergence stability. 
+Mini-batch training uses a subset of the training data to compute the gradient and update model parameters, leading to more frequent updates.
+A function is implemented to extract a minibatch from the dataset using a default batch size of 60. 
+The variable $\mathbf{i}$ represents the specified index of the minibatch to be extracted. The software design thus computes the start and end index for a 
+specified minibatch index based on the batch size, and slices the data matrix $\mathbf{X}$ and target vector $\mathbf{Y}$ to return the corresponding minibatch.
+Listings \ref{lst:minibatch} shows the implementation of the minibatch extraction function in Python.
+
+ \begin{lstlisting}[
+    language=Python, 
+    caption={Minibatch extraction function implementation},
+    label={lst:minibatch},
+    breaklines=true,
+    basicstyle=\ttfamily\small,
+    frame=single
+]
+start = i * batch_size # Starting index of the batch
+end = start + batch_size # Ending index of the batch
+X_mini = X[start:end] # Slicing along first axis (rows) # Slice the data matrix X and vector Y to get the minibatch
+Y_mini = Y[start:end]
+return X_mini, Y_mini
+\end{lstlisting}
+
+\section*{Question 4: Multinomial logistic regression model}
+\subsection*{4.a: Forward pass}
+A forward pass function is implemented to compute the predicted probabilities $\mathbf{Y\_hat}$ for a given input $\mathbf{X}$ and model parameters $\mathbf{W}$.
+Engineering design includes adding a bias term to the input data by appending a column of ones to the left of the input matrix $\mathbf{X}$. This allows the model to learn an intercept term for each class.
+The linear layer is computed by performing a matrix multiplication between the input data with bias and the weight matrix $\mathbf{W}$, resulting in the logits for each class.
+The softmax activation function is then applied to the logits to convert them into predicted probabilities $\mathbf{Y\_hat}$ for each class. The implementation of the forward pass function in Python is shown in listing \ref{lst:forwardpass}.
+ \begin{lstlisting}[
+    language=Python, 
+    caption={Forward pass function implementation},
+    label={lst:forwardpass},
+    breaklines=true,
+    basicstyle=\ttfamily\small,
+    frame=single
+]
+# Add bias term to input data (column of 1s to X matrix)
+ones = np.ones((X.shape[0], 1)) # Create a column of ones with the same number of rows as X
+X_bias = np.hstack([ones, X]) # Append the column of ones to the left of X
+logits = X_bias @ self.weights
+Y_hat = softmax(logits, axis = 1)
+return Y_hat
+\end{lstlisting}
+
+\subsection*{4.b: Gradient descent optimisation}
+In the class function train, a gradient descent optimisation step is implemented. The model weights $\mathbf{W}$ are updated iteratively based on the computed gradients of the log-likelihood loss with respect to the weights.
+The training loop iterates for a specified number of epochs, and in each epoch, the training data is processed in mini-batches. For each mini-batch, the forward pass is computed to obtain predicted probabilities $\mathbf{Y\_hat}$.
+The training set log-likelihood for the nth feature xn with respect to the weight vector wk associated with the kth node is computed as: 
+\begin{equation}
+\frac{\partial \ell^{(n)}}{\partial \mathbf{w}_k} = \left( y_{k}^{(n)} - \hat{y}_{k}^{(n)} \right) \mathbf{x}^{(n)}
+\end{equation}
+Thus the gradient for all weights $\mathbf{X}$ (average log-likelihood) is computed as: \begin{equation}
+\nabla_{\mathbf{W}} \ell = \frac{1}{N} \mathbf{X}^T \left( \mathbf{Y} - \mathbf{\hat{Y}} \right)
+\end{equation}
+The weights are then updated as follows: 
+\begin{equation}
+\mathbf{W}_{\text{new}} = \mathbf{W}_{\text{old}} + \eta \nabla_{\mathbf{W}} \ell
+\end{equation}
+where $\eta$ is the learning rate.
+
+\begin{lstlisting}[
+    language=Python, 
+    caption={Gradient descent function implementation},
+    label={lst:gradientdescent},
+    breaklines=true,
+    basicstyle=\ttfamily\small,
+    frame=single
+]
+num_samples = train_X.shape[0]
+num_batches = num_samples // batch_size 
+
+for epoch in range(epochs):
+    for i in range(num_batches):
+        x_batch, y_batch = get_mini_batch(train_X, train_Y, i, batch_size)
+
+        y_hat = self.forward(x_batch) # Forward pass to get predictions for the batch
+
+        ones = np.ones((x_batch.shape[0], 1)) # Create a column of ones with the same number of rows as x_batch
+        x_batch_bias = np.hstack([ones, x_batch]) # Append the column of ones to the left of x_batch
+
+        # Calculate the gradient of the log-likelihood wrt. to the weights
+        grad = (x_batch_bias.T @ (y_batch - y_hat)) / batch_size # Average over the batch
+
+        self.weights += learning_rate * grad
+\end{lstlisting}
+
 
 
 \end{document}
