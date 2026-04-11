@@ -268,5 +268,51 @@ The results in the log file indicate that the training and test set log-likeliho
 Furthermore, it can be observed that both the training and test accuracies are increasing over epochs, indicating that the model is improving its performance on both the training and unseen test data. 
 The final test set accuracy of 0.9198 suggests that the model is performing well in classifying the digits in the MNIST dataset.
 
+\subsection*{Question 5: Hyperparameter search}
+Optimal hyperparameters for training the model are determined by performing an exploratory search over different batch sizes and numbers of epochs.
+The batch size determines the number of samples utilized in one iteration to update the model weights. Small batch sizes provide more frequent updates, whichcan lead to faster convergence, whereas 
+larger batch sizes can provide more stable updates but may require more epochs to converge.
+The number of epochs defines how many time the entire training dataset is passed through during model training. With too few epochs, underfitting will occur, where the model has insufficient iterations to minimise the log-likelhood. 
+With too many epochs, overfitting may occur, where the model learns to fit the training data too closely and fails to generalise to unseen instances of data.  Thus, the optimal number of ephochs is required so as to ensure the underlying distribution of the data is captured effectively.
+The batch size values that are tested include 16, 64, 256, and 1024. This follows a logarithmic scale that covers small, medium, and large batch sizes. The epoch counts tested include 10, 50, and 100. 
+After training the model with each combination of batch size and epoch count, the training and test accuracies are logged to a CSV file for analysis. The results are summarized in the table \ref{tab:hyperparameter_results} below.
+
+\begin{table}[h]
+    \centering
+    \caption{Performance Comparison across Batch Sizes and Epochs}
+    \label{tab:hyperparameter_results}
+    \begin{tabular}{r c S[table-format=1.4] S[table-format=-1.4] S[table-format=1.4]}
+        \toprule
+        \textbf{Epochs} & \textbf{Batch Size} & {\textbf{Train Acc}} & {\textbf{Test LL}} & {\textbf{Test Acc}} \\
+        \midrule
+        10  & 16   & 0.9178 & -0.2875 & 0.9194 \\
+        50  & 16   & 0.9287 & -0.2680 & 0.9245 \\
+        100 & 16   & 0.9322 & -0.2655 & 0.9261 \\
+        \midrule
+        10  & 64   & 0.9030 & -0.3347 & 0.9091 \\
+        50  & 64   & 0.9208 & -0.2823 & 0.9214 \\
+        100 & 64   & 0.9256 & -0.2726 & 0.9234 \\
+        \midrule
+        10  & 256  & 0.8804 & -0.4471 & 0.8880 \\
+        50  & 256  & 0.9063 & -0.3239 & 0.9115 \\
+        100 & 256  & 0.9144 & -0.2984 & 0.9181 \\
+        \midrule
+        10  & 1024 & 0.8458 & -0.7277 & 0.8550 \\
+        50  & 1024 & 0.8846 & -0.4225 & 0.8917 \\
+        100 & 1024 & 0.8969 & -0.3630 & 0.9031 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Considering the results obtained from the hyperparameter search, it can be observed that the best performance in terms of test accuracy is achieved 
+with a batch size of 16 and 100 epochs, yielding a test accuracy of 0.9261. 
+
+It can be observed that smaller batch sizes (16) reach higher accuracies faster than larger batches (1024). This is likely because smaller 
+batches provide more frequent updates to the model weights, allowing for faster convergence. It can also be observed that increasing the number of epochs leads to improved performance. (except when overtraining occurs)
+
+\subsection*{Logging}
+Don't overwrite files 
+Logging throughout training vs logging only at the end of training.
+
 
 \end{document}
