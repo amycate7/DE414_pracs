@@ -271,7 +271,7 @@ class MultinomialLogisticRegression:
         return Y_hat
         
 
-    def train(self,train_X,train_Y,test_X,test_Y,epochs=32,learning_rate=0.01,batch_size=60):
+    def train(self,train_X,train_Y,test_X,test_Y,epochs=32,learning_rate=0.01,batch_size=60, log_file="log/log.csv"):
         """
         Trains the model utilising minibatch gradient descent, trained weights
         are stored in self.weights
@@ -328,6 +328,16 @@ class MultinomialLogisticRegression:
                 grad = (x_batch_bias.T @ (y_batch - y_hat)) / batch_size # Average over the batch
 
                 self.weights += learning_rate * grad
+     
+            # Log each epoch
+            train_Y_hat = self.forward(train_X)
+            test_Y_hat = self.forward(test_X)
+            train_acc = accuracy(train_Y, train_Y_hat)
+            test_ll = np.mean(ll(test_Y, test_Y_hat))
+            test_acc = accuracy(test_Y, test_Y_hat)
+
+            with open(log_file, "a") as f:
+                f.write(f"{epoch+1},{batch_size},{train_acc},{test_ll},{test_acc}\n")
 
 
 ####################################################################
@@ -363,28 +373,21 @@ print("Test set accuracy: ", accuracy(test_Y, y_hat))
 #        size and number of training epochs                        #
 ####################################################################
 
-log_file = "log/log.csv"
-os.makedirs("log", exist_ok=True) # Create log directory if it doesn't exist
-with open(log_file,"w") as f:
-    f.write("batch_size,epoch,train_acc,test_ll,test_acc\n")
 batch_sizes = [16, 64, 256, 1024]
 epoch_counts = [10, 50, 100]
 
 for b in batch_sizes:
     for e in epoch_counts:
-        with open(log_file, "a") as f:
+        log_file = f"log/log_b{b}_e{e}.csv"
+        os.makedirs("log", exist_ok=True) # Create log directory if it doesn't exist
+        with open(log_file, "w") as f:
             f.write(f"===Testing batch size: {b}, Ephocs: {e} ===\n")
+        with open(log_file,"a") as f:
+            f.write("epoch, batch_size,train_acc,test_ll,test_acc\n")
 
-            lr = MultinomialLogisticRegression(train_X.shape[1], train_Y.shape[1]) # new model to ensure weights are reset before training
-            lr.train(train_X, train_Y, test_X, test_Y, epochs = e, learning_rate = 0.01, batch_size = b)
-            train_Y_hat = lr.forward(train_X)
-            test_Y_hat = lr.forward(test_X)
-            train_acc = accuracy(train_Y, train_Y_hat)
-            test_ll = np.mean(ll(test_Y, test_Y_hat))
-            test_acc = accuracy(test_Y, test_Y_hat)
+        lr = MultinomialLogisticRegression(train_X.shape[1], train_Y.shape[1]) # new model to ensure weights are reset before training
+        lr.train(train_X, train_Y, test_X, test_Y, epochs = e, learning_rate = 0.01, batch_size = b, log_file = log_file)
 
-            with open(log_file, "a") as f:
-                f.write(f"{e},{b},{train_acc},{test_ll},{test_acc}\n")
 
 #******************************************************************#
 
