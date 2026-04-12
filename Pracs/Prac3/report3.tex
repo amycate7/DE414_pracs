@@ -65,7 +65,7 @@
 
 \section*{Introduction}
 This report documents the implementation of a Multinomial Logistic Regression model using Python. The model is trained on the MNIST dataset using a vectorized 
-Softmax function and Minibatch Gradient Descent with the aim to correctly classify digits. This report documents the implementation of the model, the software designed, an optimal hyperparameter analysis, and the results obtained.
+Softmax function and Minibatch Gradient Ascent with the aim to correctly classify digits. This report documents the implementation of the model, the software designed, an optimal hyperparameter analysis, and the results obtained.
 
 \section*{Question 1: Softmax Function}
 \subsection*{Mathematical definition}
@@ -179,8 +179,8 @@ Y_hat = softmax(logits, axis = 1)
 return Y_hat
 \end{lstlisting}
 
-\subsection*{Gradient descent optimisation}
-The model parameters $\mathbf{W}$ are optimised using an iterative gradient descent approach. A minibatch protocol is used so as to balance computational efficiency with convergence stability. 
+\subsection*{Gradient Ascent optimisation}
+The model parameters $\mathbf{W}$ are optimised using an iterative gradient ascent approach. A minibatch protocol is used so as to balance computational efficiency with convergence stability. 
 This optimisation process iterates for a specified number of epochs, where each epoch represents a complete pass through the dataset.
 
 The objective of the optimisation is to maximise the average log-likelihood $\ell(\mathbf{W})$.
@@ -332,9 +332,13 @@ This provides insight into the model's convergence behaviour and assists with se
 Despite the 100 epoch training, with a batch size of 16, yielding a test accuracy of 0.9261, further analysis of the logged data reveals that the true optimal hyperparameters for training the model are a batch size of 16 and an epoch count of 98, yielding a test accuracy of 0.9264. 
 This decline suggests that the model begins to overfit, where the model begins to memorise the training data, at the expense of generalisation. Consequently, the optimal hyperparametes for training the model include a batch size of 16 and an 
 epoch count of 98, yielding a test accuracy of 0.9264.
- 
 
 \section*{Conclusion}
-
+In this report, a Multinomial Logistic Regression model was implemented and trained on the MNIST dataset using a vectorised Softmax function and Minibatch Gradient Ascent optimisation.
+The implementation included the forward pass, log-likelihood computation, and minibatch extraction functions. The model was trained with various hyperparameter configurations, and the results were logged for performance evaluation.
+The hyperparameter search revealed that a small batch size of 16 yielded rapid convergence and high test accuracy, ultimately achieving an optimal test accuracy of 0.9264. 
+Furthermore, the optimal epoch count was determined to be 98, as training beyond this point led to a decline in generalisation performance (overfitting). This emphasises 
+the fact that eventhough larger batches provide more numerical stability, they require an increased number of epochs to converge to an optimal solution. Ultimately, a successful 
+implementation of a Multinomial Logistic Regression model was achieved, capable of effectively classifying digits in the MNIST dataset with a high degree of accuracy.
 
 \end{document}
