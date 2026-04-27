@@ -1,7 +1,9 @@
 # Fdb version 4
-["pdflatex"] 1777279466.2952 "c:/Users/amycm/OneDrive/Fourth Year Eng/DE 414/Pracs/Prac4/report4.tex" "report4.pdf" "report4" 1777279468.51784 0
+["pdflatex"] 1777288025.38018 "c:/Users/amycm/OneDrive/Fourth Year Eng/DE 414/Pracs/Prac4/report4.tex" "report4.pdf" "report4" 1777288028.03624 0
   "C:/Users/amycm/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1773328787 80909 eab91d9745dd2edfd62a31d53cd5fe15 ""
+  "C:/Users/amycm/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/tcrm1095.pk" 1742327299 12668 bdc8300927c4ae6ab99a606033c94631 ""
   "C:/Users/amycm/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1742326988 24225046 5915e9a9cac594d1b341b9065a42c5ad ""
+  "C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/tfm/jknappen/ec/tcrm1095.tfm" 993062508 1460 8005ce585ff351dff78998923504da5e ""
   "C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1233951848 1004 54797486969f23fa377b128694d548df ""
   "C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1233951848 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
   "C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/tfm/public/cm/cmbx10.tfm" 1136765053 1328 c834bbb027764024c09d3d2bf908b5f0 ""
@@ -22,6 +24,7 @@
   "C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/tfm/public/cm/cmtt10.tfm" 1136765053 768 1321e9409b4137d6fb428ac9dc956269 ""
   "C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb" 1247596666 34811 78b52f49e893bcba91bd7581cdc144c0 ""
   "C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb" 1247596666 32080 340ef9bf63678554ee606688e7b5339d ""
+  "C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb" 1247596667 30251 6afa5cb1d0204815a708a080681d4674 ""
   "C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb" 1247596667 36299 5f9df58c2139e7edcf37c8fca4bd384d ""
   "C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi6.pfb" 1247596666 37166 8ab3487cbe3ab49ebce74c29ea2418db ""
   "C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb" 1247596666 35469 dcf3a5f2fc1862f5952e3ee5eb1d98c4 ""
@@ -31,6 +34,7 @@
   "C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb" 1247596667 32734 69e00a6b65cedb993666e42eedb3d48f ""
   "C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb" 1247596667 32726 39f0f9e62e84beb801509898a605dbd5 ""
   "C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1247596667 32569 5e5ddc8df908dea60932f3c484a54c0d ""
+  "C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb" 1247596667 32587 65067f817f408bc71a7312f3d9828a9b ""
   "C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb" 1247596667 32626 5abc8bb2f28aa647d4c70f8ea38cc0d3 ""
   "C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb" 1247596667 31099 342ef5a582aacbd3346f3cf4579679fa ""
   "C:/Users/amycm/AppData/Local/Programs/MiKTeX/tex/context/base/mkii/supp-pdf.mkii" 1580390158 71627 94eb9990bed73c364d7f53f960cc8c5b ""
@@ -72,11 +76,13 @@
   "C:/Users/amycm/AppData/Local/Programs/MiKTeX/tex/latex/translations/dicts/translations-basic-dictionary-english.trsl" 1644048522 5588 0c1628daf15f4411ff1f463114c634a3 ""
   "C:/Users/amycm/AppData/Local/Programs/MiKTeX/tex/latex/translations/translations.sty" 1644048522 44247 2188b95d0ee74e31eca4d316263c58a7 ""
   "C:/Users/amycm/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1700127522 55487 80a65caedd3722f4c20a14a69e785d8f ""
-  "c:/Users/amycm/OneDrive/Fourth Year Eng/DE 414/Pracs/Prac4/report4.tex" 1777279462 10313 0a2de3ec6dc590b968f437edb5398c27 ""
+  "c:/Users/amycm/OneDrive/Fourth Year Eng/DE 414/Pracs/Prac4/report4.tex" 1777288023 19132 d54904872ddb775b31d5bf63aa709af4 ""
   "decision_surface.png" 1777125042 98315 e08f1d30b0a3ab58e18e599d8457fa01 ""
-  "report4.aux" 1777279468 1376 c40dfa2ce49dfe15e194a9a2245d4d22 "pdflatex"
-  "report4.tex" 1777279462 10313 0a2de3ec6dc590b968f437edb5398c27 ""
+  "decision_surface_q2.png" 1777215771 107453 67cd562a5b9fb8d2bc5271c90aa6f751 ""
+  "report4.aux" 1777288027 2821 5d91c43c8c059fbcc0730e46b1872350 "pdflatex"
+  "report4.tex" 1777288023 19132 d54904872ddb775b31d5bf63aa709af4 ""
   "simpledata.png" 1777121516 129152 8484619d30e0233aee30606e778ca73f ""
+  "twoblobdata.png" 1777215762 158145 7920b6412fc756f9096bc143a6400eb4 ""
   (generated)
   "report4.aux"
   "report4.log"

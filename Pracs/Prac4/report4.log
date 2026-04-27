@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.3.18)  27 APR 2026 10:44
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.3.18)  27 APR 2026 13:07
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -330,30 +330,44 @@ Package pdftex.def Info: simpledata.png  used on input line 80.
 
 {C:/Users/amycm/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}] (C:\Users\amycm\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstlang1.sty
 File: lstlang1.sty 2023/02/27 1.9 listings language file
-) [2 <./simpledata.png>]
-<decision_surface.png, id=22, 462.528pt x 346.896pt>
+) [2 <./simpledata.png>] [3]
+<decision_surface.png, id=26, 462.528pt x 346.896pt>
 File: decision_surface.png Graphic file (type png)
 <use decision_surface.png>
 Package pdftex.def Info: decision_surface.png  used on input line 205.
 (pdftex.def)             Requested size: 328.82707pt x 246.63135pt.
- [3] [4 <./decision_surface.png>] (report4.aux)
+ [4
+
+ <./decision_surface.png>]
+<twoblobdata.png, id=32, 578.16pt x 433.62pt>
+File: twoblobdata.png Graphic file (type png)
+<use twoblobdata.png>
+Package pdftex.def Info: twoblobdata.png  used on input line 221.
+(pdftex.def)             Requested size: 328.82707pt x 246.61679pt.
+ [5 <./twoblobdata.png>] [6]
+<decision_surface_q2.png, id=42, 462.528pt x 346.896pt>
+File: decision_surface_q2.png Graphic file (type png)
+<use decision_surface_q2.png>
+Package pdftex.def Info: decision_surface_q2.png  used on input line 340.
+(pdftex.def)             Requested size: 328.82707pt x 246.63135pt.
+ [7] [8 <./decision_surface_q2.png>] (report4.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-04>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 9405 strings out of 474486
- 202499 string characters out of 5743755
- 2012542 words of memory out of 5000000
- 31635 multiletter control sequences out of 15000+600000
- 564474 words of font info for 59 fonts, out of 8000000 for 9000
+ 9467 strings out of 474486
+ 203451 string characters out of 5743755
+ 2211542 words of memory out of 5000000
+ 31696 multiletter control sequences out of 15000+600000
+ 564815 words of font info for 60 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 73i,9n,80p,444b,1340s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi6.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on report4.pdf (4 pages, 352479 bytes).
+ 73i,8n,80p,444b,1723s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <C:\Users\amycm\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1095.pk><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi6.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/amycm/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
+Output written on report4.pdf (8 pages, 603317 bytes).
 PDF statistics:
- 85 PDF objects out of 1000 (max. 8388607)
+ 118 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 11 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 21 words of extra memory for PDF output out of 10000 (max. 10000000)
 
