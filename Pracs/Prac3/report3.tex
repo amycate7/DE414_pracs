@@ -79,7 +79,7 @@ The resulting output represents a discrete probability distribution over the $K$
 \subsection*{Software design and algorithmic implementation}
 The function implementation adopts a vectorized design approach that computes Softmax for an N-dimensional \texttt{NumPy} array \texttt{x}. The vectorized 
 operations leverage \texttt{NumPy} functions that eliminate iterative loops for computational efficiency on large datasets.
-To ensure numerical stability, the maximum value along the axis is subtracted from the input before exponentiation to prevent overflow/underflow issues. This approach shifts values without altering their relative probabilities.
+To ensure numerical stability, the maximum value along the axis is subtracted from the input before exponentiation to prevent overflow or underflow issues. This approach shifts values without altering their relative probabilities.
 The function then computes the exponentials of the shifted inputs and normalizes them by dividing by the sum of exponentials along the specified axis, resulting in a probability distribution.
 Listing \ref{lst:softmax} below shows the implementation of the Softmax function in Python.
 
@@ -98,7 +98,7 @@ return exps / np.sum(exps, axis = axis, keepdims = True) # Compute softmax
 
 \section*{Question 2: Log-likelihood Function}
 \subsection*{Mathematical definition}
-The Log-Likelihood function computes how well predicted probabilities  $\mathbf{\hat{y}}$ match the true one-hot encoded labels $\mathbf{y}$, and is thus used to evalute the convergence of the model during training. 
+The Log-Likelihood function computes how well predicted probabilities $\mathbf{\hat{y}}$ match the true one-hot encoded labels $\mathbf{y}$, and is thus used to evalute the convergence of the model during training. 
 For $N$ observations and $K$ discrete classes, the log-likelihood $\ell(\mathbf{W})$ is defined as:
 \begin{equation}
 \ell(\mathbf{W}) = \sum_{n=1}^{N} \sum_{k=1}^{K} y_{k}^{(n)} \ln \left( \hat{y}_{k}^{(n)} \right)
@@ -134,7 +134,7 @@ Mini-batch training uses a subset of the training data to compute the gradient a
 The implemention uses a function \texttt{get\_mini\_batch} to partition the dataset. This function accepts 
 a batch index $\mathbf{i}$ representing the specified index of the minibatch to be extracted, and a batch size $\mathbf{b}$ (defaulting to 60).
 The software design computes the boundaries of the dataset partition by calculating the \texttt{start} and \texttt{end} indices relative to $\mathbf{i}$ and $\mathbf{b}$,
-then uses \texttt{NumPy} slicing capabilties to extract the corresponding data samples from the feature matrix $\mathbf{X}$ and target vector $\mathbf{Y}$.
+then uses \texttt{NumPy} slicing capabilities to extract the corresponding data samples from the feature matrix $\mathbf{X}$ and target vector $\mathbf{Y}$.
 Listing \ref{lst:minibatch} shows the implementation of the minibatch extraction function in Python.
 
  \begin{lstlisting}[
@@ -199,11 +199,11 @@ Using the calculated gradient, the weights are updated in the direction that max
 \end{equation}
 where $\eta$ is the learning rate (step size).
 
-This optimisation process is implemented in as shown in listing \ref{lst:gradientdescent} below, where the model weights are updated iteratively for each minibatch across all epochs.
+This optimisation process is implemented as shown in listing \ref{lst:gradientdescent} below, where the model weights are updated iteratively for each minibatch across all epochs.
 
 \begin{lstlisting}[
     language=Python, 
-    caption={Gradient descent function implementation},
+    caption={Gradient ascent function implementation},
     label={lst:gradientdescent},
     breaklines=true,
     basicstyle=\ttfamily\small,
@@ -247,8 +247,8 @@ lr.train(train_X, train_Y, test_X, test_Y, epochs=32, learning_rate=0.01, batch_
 \subsection*{Performance evaluation}
 To analyse the performance and generalisation capabilities of the trained model, iterative logging of the training and test set log-likelihoods and accuracies is implemented after each epoch of training to ensure the persistence of the results.
 The log file is created in a "log" directory, and the results are appended after each epoch of training.
-After executing the training process, the structured log file can be analyzed to evaluate the model's learning trajectory and assists in identifying any possible overfitting or underfitting. The trends observed provide insights into how well the model generalizes to unseen data and whether it is converging towards a good solution.
-Listing \ref{lst:logging} shows the implementation of the append only file logging functionality and Table \ref{tab:model_performance} summarizes the log file data for the last five epochs of training. 
+After executing the training process, the structured log file can be analyzed to evaluate the model's learning trajectory and assist in identifying any possible overfitting or underfitting. The trends observed provide insights into how well the model generalizes to unseen data and whether it is converging towards a good solution.
+Listing \ref{lst:logging} shows the implementation of the append-only file logging functionality and Table \ref{tab:model_performance} summarizes the log file data for the last five epochs of training. 
 
  \begin{lstlisting}[
     language=Python, 
@@ -281,17 +281,17 @@ with open(log_file, "a") as f:
 The results in the log file demonstrate that the training and test set log-likelihoods are monotonically increasing (becoming less negative) over epochs, which validates that 
 the Gradient Ascent algorithm is successfully maximising the objective function. 
 Furthermore, it can be observed that both the training and test accuracies are increasing over epochs, indicating that the model is improving its performance on both the training and unseen test data. 
-The final test set accuracy of 91.98\% suggests that the model is performing well in this specific MNIST digit classification task, correclty classifying a high proportion of the test samples.
+The final test set accuracy of 91.98\% suggests that the model is performing well in this specific MNIST digit classification task, correctly classifying a high proportion of the test samples.
 
 \subsection*{Question 5: Hyperparameter search}
 To identify the optimal hyperparameters for training the Multinomial Logistic Regression model, an exploratory search is conducted over a range of batch sizes and epoch counts.
 The batch size determines the number of samples utilised in a single iteration to update the model weights; smaller batches provide more frequent updates that can lead to faster convergence, whereas 
 larger batches offer more stable weight updates but often require more epochs to converge to an optimal solution.
 The number of epochs defines how many time the entire training dataset is passed through during model training. With too few epochs, underfitting will occur, where the model has insufficient iterations to minimise the log-likelhood. 
-With too many epochs, overfitting may occur, where the model learns to fit the training data too closely and fails to generalise to unseen instances of data.  Thus, the optimal number of epochs is required so as to ensure the underlying distribution of the data is captured effectively.
+With too many epochs, overfitting will occur, where the model learns to fit the training data too closely and fails to generalise to unseen instances of data.  Thus, the optimal number of epochs is required to ensure the underlying distribution of the data is captured effectively.
 
 The batch size values that are tested include 16, 64, 256, and 1024. This follows a logarithmic scale that covers small, medium, and large batch sizes. The epoch counts tested include 10, 50, and 100. 
-During the training the each model with the varying combinations of batch size and epoch counts, the training and test set accuracies are logged to CSV files for analysis. The results are summarized in the table \ref{tab:hyperparameter_results} below.
+During the training of each model with their corresponding unique set of hyperparameters, the training and test set accuracies are logged to CSV files for analysis. The results are summarized in the table \ref{tab:hyperparameter_results} below.
 
 \begin{table}[h]
     \centering
@@ -329,16 +329,32 @@ To prevent data loss, a robust logging strategy is employed that writes the mode
 By defining the file path as \texttt{log\_file = f"log/log\_b\{batch\_size\}\_e\{epochs\}.csv"}, the logging system ensures that results from different model training runs are stored seperately, and do not overwrite each other.
 Furthermore, the performance metrics - such as log-likelihood and accuracy - are logged throughout the training process instead of only at the end, allowing for monitoring of the model's learning progress and detection of issues such as overfitting or underfitting.
 This provides insight into the model's convergence behaviour and assists with selecting optimal hyperparameters for training.
-Despite the 100 epoch training, with a batch size of 16, yielding a test accuracy of 0.9261, further analysis of the logged data reveals that the true optimal hyperparameters for training the model are a batch size of 16 and an epoch count of 98, yielding a test accuracy of 0.9264. 
-This decline suggests that the model begins to overfit, where the model begins to memorise the training data, at the expense of generalisation. Consequently, the optimal hyperparametes for training the model include a batch size of 16 and an 
+Despite the 100 epoch training with a batch size of 16 yielding a test accuracy of 0.9261, further analysis of the logged data reveals that the true optimal hyperparameters for training the model are a batch size of 16 and an epoch count of 98, yielding a test accuracy of 0.9264. 
+This decline suggests that the model begins to overfit, where the model begins to memorise the training data at the expense of generalisation. Consequently, the optimal hyperparametes for training the model include a batch size of 16 and an 
 epoch count of 98, yielding a test accuracy of 0.9264.
 
+\begin{table}[h]
+\centering
+\caption{Performance Metrics for Batch Size 16 (Epochs 97--100)}
+\label{tab:convergence_detail}
+\begin{tabular}{ccccc}
+\toprule
+\textbf{Epoch} & \textbf{Batch Size} & \textbf{Train Acc} & \textbf{Test LL} & \textbf{Test Acc} \\ 
+\midrule
+97  & 16 & 0.9320 & -0.26558 & 0.9263 \\
+98  & 16 & 0.9320 & -0.26556 & \textbf{0.9264} \\
+99  & 16 & 0.9321 & -0.26554 & 0.9262 \\
+100 & 16 & 0.9322 & -0.26553 & 0.9261 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\newpage
 \section*{Conclusion}
 In this report, a Multinomial Logistic Regression model was implemented and trained on the MNIST dataset using a vectorised Softmax function and Minibatch Gradient Ascent optimisation.
 The implementation included the forward pass, log-likelihood computation, and minibatch extraction functions. The model was trained with various hyperparameter configurations, and the results were logged for performance evaluation.
 The hyperparameter search revealed that a small batch size of 16 yielded rapid convergence and high test accuracy, ultimately achieving an optimal test accuracy of 0.9264. 
-Furthermore, the optimal epoch count was determined to be 98, as training beyond this point led to a decline in generalisation performance (overfitting). This emphasises 
-the fact that eventhough larger batches provide more numerical stability, they require an increased number of epochs to converge to an optimal solution. Ultimately, a successful 
-implementation of a Multinomial Logistic Regression model was achieved, capable of effectively classifying digits in the MNIST dataset with a high degree of accuracy.
+Furthermore, the optimal epoch count was determined to be 98 since training beyond this point led to a decline in generalisation performance (overfitting).
+Ultimately, a successful implementation of a Multinomial Logistic Regression model was achieved, capable of effectively classifying digits in the MNIST dataset with a high degree of accuracy.
 
 \end{document}
