@@ -113,10 +113,10 @@ INPUT C:\Users\amycm\AppData\Local\Programs\MiKTeX\tex\latex\listings\lstlang1.s
 INPUT C:\Users\amycm\AppData\Local\Programs\MiKTeX\tex\latex\listings\lstlang1.sty
 INPUT C:\Users\amycm\AppData\Local\Programs\MiKTeX\tex\latex\listings\lstlang1.sty
 INPUT C:\Users\amycm\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmtt10.tfm
+INPUT C:\Users\amycm\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmbx12.tfm
 INPUT C:\Users\amycm\AppData\Local\Programs\MiKTeX\fonts\tfm\jknappen\ec\tcrm1095.tfm
 OUTPUT report5.pdf
 INPUT C:\Users\amycm\AppData\Local\MiKTeX\fonts\map\pdftex\pdftex.map
-INPUT C:\Users\amycm\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmbx12.tfm
 INPUT .\Q4.png
 INPUT .\Q4.png
 INPUT .\Q4.png

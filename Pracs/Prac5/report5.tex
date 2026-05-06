@@ -80,13 +80,14 @@ The loaded data consists of 60000 training samples and 10000 test samples, with 
 ]
 +----------------------------------------
 | Train X: torch.Size([60000, 784])
-| Train Y: torch.Size([60000])
+| Train Y: torch.Siz1: Defining the CNN Modele([60000])
 | Test X: torch.Size([10000, 784])
 | Test Y: torch.Size([10000])
 + ----------------------------------------
 \end{lstlisting}
 
-\section*{Question 2: Defining the CNN Model}
+\section*{Question 2}
+\subsection*{Question 2.1: Defining the CNN model structure}
 The CNN is defined using PyTorch's \texttt{nn.Module} class, and the layers are initialised in the constuctor. The CNN layer takes the input image and applies convolution to extract features, 
 while the ReLU activation function introduces non-linearity so that the network can learn complex patterns. The fully connected layer takes the flattened output from the CNN layer and produces the final class scores for classification.
 The model parameters are set to ensure that the output dimensions of each layer are compatible, allowing the data to flow correctly through the network. The CNN layer outputs a matrix of size 11x11 with 10 channels, which is then flattened to a vector of size 1210 before being passed to the dense layer for classification into 10 classes (digits 0-9). 
@@ -111,6 +112,7 @@ self.relu = nn.ReLU()
 self.linear = nn.Linear(in_features=1210, out_features=K)
 \end{lstlisting}
 
+\subsection*{Question 2.2: Implementing the forward pass}
 The forward pass is then implemented to define how the input data flows through the network layers. The input image is reshaped to match the expected 
 input dimensions of the CNN layer, and the output from the convolutional layer is passed through the ReLU activation function before being flattened and fed into the dense layer for classification.
 \begin{lstlisting}[
@@ -163,6 +165,48 @@ CNN(
 
 \subsection*{Question 3: Training the model}
 
+The model was trained over a number of epochs, where in each epoch the training data was iterated through in batches. 
+For each batch, a forward pass was performed to calculate the model's predictions, and the loss was determined using these predictions and the target labels. 
+Then, the gradients were calculated using a backward pass, and the model's parameters were updated using the optimizer.
+The training loss as well as the training accuracy (i.e. percentage of examples in the batch that were correctly classified) are tracked and printed out at the end of each epoch.
+Note that the model was set to training mode during the training loop.
+\begin{lstlisting}[
+    language=Python, 
+    caption={Model training loop, showing the process of forward pass, loss calculation, backward pass, and parameter updates.},
+    label={lst:modeltraining},
+    breaklines=true,
+    basicstyle=\ttfamily\small,
+    frame=single
+]
+y_hat = model(X_i)[0] # forward pass - model prediction
+loss = loss_fn(y_hat, y_i) # calculate training loss
+
+# clear gradients on all optimised tensors, otherwise gradients accumulate on subsequent backward passes
+optimizer.zero_grad() 
+loss.backward() # calculate gradients
+optimizer.step() # update model parameters using the calculated gradients
+\end{lstlisting}   
+
+The model is also evaluated on the test set at the end of each epoch to track the test loss and test accuracy. The model is set 
+to evaluation mode, and the forward pass and loss calculation then proceed to take place.
+The test loss and test accuracy are computed for each epoch and printed out alongside the training loss and training accuracy, as shown in the terminal output in Listing \ref{lst:trainingperformance}.
+Mention a point here on model test accuracy - starts to overfit?
+Listing \ref{lst:modeltesting} shows the code snippet for evaluating the model on the test set throughout the model training process.
+\begin{lstlisting}[
+    language=Python, 
+    caption={Model evaluation on the test set during training, showing the forward pass and loss calculation for the test data.},
+    label={lst:modeltesting},
+    breaklines=true,
+    basicstyle=\ttfamily\small,
+    frame=single
+]
+y_hat = model(X_i)[0]
+loss = loss_fn(y_hat, y_i)
+# track the test loss and accuracy
+test_loss += loss.item() * test_batch_size
+test_accuracy += hits(y_hat,y_i)
+\end{lstlisting}  
+
 \begin{lstlisting}[
     language=Python, 
     caption={Model epoch performance during training, showing loss and accuracy for both training and test sets.},
@@ -186,6 +230,27 @@ Epoch 10 Loss: 0.0519 Accuracy: 98.53 Test Loss: 0.0570 Test Accuracy: 98.18
 \end{lstlisting}
 
 \subsection*{Question 4: Visualising trained CNN filters}
+An instance of data from the test set is fed through the model and its corresponding filters and correlations are plotted using the \texttt{plot\_filters} function. 
+This is executed by initially extracting the first sample from the test set, then extracting the weights from the convolutional layer of the model, and finally performing
+a forward pass for the sample from the test set to obtain the network outputs y\_hat, z\_1 and v\_1. The \texttt{plot\_filters} function is then called with the appropriate arguments to visualise the filters and correlations. 
+The resulting visualisation of the trained CNN filters is shown in Figure \ref{fig:trainingfilters}. 
+
+\begin{lstlisting}[
+    language=Python, 
+    caption={Visualisation of the trained CNN filters.},
+    label={lst:visualisefilters},
+    breaklines=true,
+    basicstyle=\ttfamily\small,
+    frame=single
+]
+X = test_X[0:1, :] # sample to be fed to your model 
+H = model.conv_1.weight.detach() # extract the weights from the convolutional layer and detach from computational graph
+model.eval() # set model to evaluation mode
+with torch.no_grad(): # stop tracking gradients for the forward pass
+  y_hat, z_1, v_1 = model(X) # forward pass for the sample
+
+plot_filters(X.detach(), H, z_1.detach(), v_1.detach()) # plot the filters and correlations
+\end{lstlisting}  
 
 \begin{figure}[htbp]
     \centering
