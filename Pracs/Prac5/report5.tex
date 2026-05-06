@@ -64,12 +64,12 @@
 \maketitle
 
 \section*{Introduction}
-This report documents the implementation of a Convolutional Neural Network using PyTorch. It explores defining the CNN model structure, training the model, 
-and visualising trained CNN filters. The CNN is designed to classify images from the MNIST dataset.
+This report details the implementation of a Convolutional Neural Network (CNN) using PyTorch. It explores defining the network architecture, the training process on the MNIST dataset, 
+and the visualisation of the trained CNN filters.
 
 \section*{Question 1: Loading the data}
-The function \texttt{load\_npz} is used to load the MNIST dataset from a .npz file. The dataset is split into training and test sets, and the shapes of the loaded data are printed to confirm successful loading.
-The loaded data consists of 60000 training samples and 10000 test samples, with each image flattened into a 784-dimensional vector (28x28 pixels), as shown in the terminal output in Listing \ref{lst:loadingdata}.
+The function \texttt{load\_npz} is used to import the MNIST dataset from a .npz file. The dataset is partitioned into training and test sets containing 60000 and 10000 samples, respectively.
+Each sample is a flattened 784-dimensional vector, representing a 28x28 pixel grayscale image, as verified by the dimensions shown in Listing \ref{lst:loadingdata}.
 \begin{lstlisting}[
     language=Python, 
     caption={Terminal output showing the dimensions of the loaded MNIST dataset.},
@@ -80,7 +80,7 @@ The loaded data consists of 60000 training samples and 10000 test samples, with 
 ]
 +----------------------------------------
 | Train X: torch.Size([60000, 784])
-| Train Y: torch.Siz1: Defining the CNN Modele([60000])
+| Train Y: torch.Size([60000])
 | Test X: torch.Size([10000, 784])
 | Test Y: torch.Size([10000])
 + ----------------------------------------
@@ -88,16 +88,22 @@ The loaded data consists of 60000 training samples and 10000 test samples, with 
 
 \section*{Question 2}
 \subsection*{Question 2.1: Defining the CNN model structure}
-The CNN is defined using PyTorch's \texttt{nn.Module} class, and the layers are initialised in the constuctor. The CNN layer takes the input image and applies convolution to extract features, 
-while the ReLU activation function introduces non-linearity so that the network can learn complex patterns. The fully connected layer takes the flattened output from the CNN layer and produces the final class scores for classification.
-The model parameters are set to ensure that the output dimensions of each layer are compatible, allowing the data to flow correctly through the network. The CNN layer outputs a matrix of size 11x11 with 10 channels, which is then flattened to a vector of size 1210 before being passed to the dense layer for classification into 10 classes (digits 0-9). 
+The CNN is implemented as a subclass of \texttt{nn.Module}, with its layers initialised in the constuctor. 
+The architecture consists of:
+\begin{itemize}
+    \item Convolutional layer (CNN): Extracts spatial features using a specified kernel size and stride.
+    \item ReLU activation: Introduces non-linearity which enables the model to learn complex patterns in the data.
+    \item Dense (fully connected) layer: Maps the flattened output from the CNN layer to the final class scores for digits 0-9.
+\end{itemize}
+The hyperparameters for the network are chosen to ensure that the dimensions of each layer are compatible, allowing the data to flow correctly through the network. 
+The specific hyperparameter configurations are as follows:
 \begin{itemize}
     \item CNN layer: P1 = P2 = 28, P3 = 1, M1 = M2 = 8, M3 = 10, S = 2
     \item ReLU activation: Q1 = Q2 = 11, Q3 = 10
     \item Dense layer: P = 1210, Q = 10
 \end{itemize}
-The code snippet in Listing \ref{lst:cnnmodel} shows the definition of the CNN model structure in PyTorch.
 
+The code snippet in Listing \ref{lst:cnnmodel} shows the definition of the CNN model structure in PyTorch.
 \begin{lstlisting}[
     language=Python, 
     caption={Definition of the CNN model structure.},
@@ -113,8 +119,10 @@ self.linear = nn.Linear(in_features=1210, out_features=K)
 \end{lstlisting}
 
 \subsection*{Question 2.2: Implementing the forward pass}
-The forward pass is then implemented to define how the input data flows through the network layers. The input image is reshaped to match the expected 
-input dimensions of the CNN layer, and the output from the convolutional layer is passed through the ReLU activation function before being flattened and fed into the dense layer for classification.
+The forward pass defines the transformation of input data through the network. The input vector 
+is first reshaped to a 4D tensor to match the expected input format of the convolutional layer, which is (Batch size, Channels, Height, Width).
+After convolution and ReLU activation, the resulting feature maps are flattened into a 1D vector before being passed to the dense layer for classification.
+
 \begin{lstlisting}[
     language=Python, 
     caption={Implementation of the forward pass through the CNN model.},
@@ -132,8 +140,10 @@ y_hat = self.linear(v_1_flat)
 \end{lstlisting}
 
 \subsection*{Question 2.3: Instantiating the model}
-The model is instantiated by creating an instance of the CNN class defined in Question 2. Cross entropy loss function as well as an SGD optimiser is then defined. 
-Model parameters are defined: learning rate = 0.01, batch size = 30 and epochs = 10. The model summary is printed out to confirm the architecture and the number of parameters in each layer, as shown in the terminal output in Listing \ref{lst:modelsummary}.
+The model is instantiated with a kernel size of 8, 10 output channels, and a stride of 2. 
+We utilise the cross-entropy loss function and the SGD optimizer with a learning rate of 0.01. 
+A batch size of 30 was selected for training over 10 epochs. 
+The model summary is printed out to confirm the architecture and the number of parameters in each layer, as shown in the terminal output in Listing \ref{lst:modelsummary}.
 
 \begin{lstlisting}[
     language=Python, 
@@ -165,11 +175,12 @@ CNN(
 
 \subsection*{Question 3: Training the model}
 
-The model was trained over a number of epochs, where in each epoch the training data was iterated through in batches. 
-For each batch, a forward pass was performed to calculate the model's predictions, and the loss was determined using these predictions and the target labels. 
-Then, the gradients were calculated using a backward pass, and the model's parameters were updated using the optimizer.
-The training loss as well as the training accuracy (i.e. percentage of examples in the batch that were correctly classified) are tracked and printed out at the end of each epoch.
-Note that the model was set to training mode during the training loop.
+The training process involved 10 iterations (epochs) over the entire dataset. In each batch, the model performed a forward pass 
+to generate predictions, followed by a backward pass to compute gradients and update weights via the optimizer. To prevent gradient accumulation across batches, 
+\texttt{optimizer.zero\_grad()} was called at the start of each step. The model's performance was monitored on both the training and test sets (Listing \ref{lst:trainingperformance}). 
+As seen by Listing \ref{lst:trainingperformance}, the final test accuracy of 98.18\% closely tracks the training accuracy of 98.53\%. This narrow margin indicates that the model has successfully learned to generalize from the training data rather than simply memorizing it, suggesting that overfitting is minimal.
+Listing \ref{lst:modeltraining} and \ref{lst:modeltesting} shows the code snippets for training the model and the evaluation of the model on the test set, respectively.
+
 \begin{lstlisting}[
     language=Python, 
     caption={Model training loop, showing the process of forward pass, loss calculation, backward pass, and parameter updates.},
@@ -187,11 +198,6 @@ loss.backward() # calculate gradients
 optimizer.step() # update model parameters using the calculated gradients
 \end{lstlisting}   
 
-The model is also evaluated on the test set at the end of each epoch to track the test loss and test accuracy. The model is set 
-to evaluation mode, and the forward pass and loss calculation then proceed to take place.
-The test loss and test accuracy are computed for each epoch and printed out alongside the training loss and training accuracy, as shown in the terminal output in Listing \ref{lst:trainingperformance}.
-Mention a point here on model test accuracy - starts to overfit?
-Listing \ref{lst:modeltesting} shows the code snippet for evaluating the model on the test set throughout the model training process.
 \begin{lstlisting}[
     language=Python, 
     caption={Model evaluation on the test set during training, showing the forward pass and loss calculation for the test data.},
@@ -230,10 +236,9 @@ Epoch 10 Loss: 0.0519 Accuracy: 98.53 Test Loss: 0.0570 Test Accuracy: 98.18
 \end{lstlisting}
 
 \subsection*{Question 4: Visualising trained CNN filters}
-An instance of data from the test set is fed through the model and its corresponding filters and correlations are plotted using the \texttt{plot\_filters} function. 
-This is executed by initially extracting the first sample from the test set, then extracting the weights from the convolutional layer of the model, and finally performing
-a forward pass for the sample from the test set to obtain the network outputs y\_hat, z\_1 and v\_1. The \texttt{plot\_filters} function is then called with the appropriate arguments to visualise the filters and correlations. 
-The resulting visualisation of the trained CNN filters is shown in Figure \ref{fig:trainingfilters}. 
+To interpret the model's learned behavior, a single test sample was passed through the network in evaluation mode and its corresponding filters and correlations are plotted using the \texttt{plot\_filters} function. 
+Using \texttt{torch.no\_grad()}, we extracted the pre-activation maps ($z_1$) and post-activation feature maps ($v\_1$). These, along with the detached convolutional weights ($H$), were plotted using 
+\texttt{plot\_filters}. The resulting visualisation of the trained CNN filters is shown in Figure \ref{fig:trainingfilters}.
 
 \begin{lstlisting}[
     language=Python, 
